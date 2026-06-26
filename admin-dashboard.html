@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operations Dashboard — Meridian Voyages Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  body{background:var(--admin-bg);color:var(--admin-text);}
+  .admin-shell{display:grid;grid-template-columns:248px 1fr;min-height:100vh;}
+
+  /* Sidebar */
+  .sidebar{background:var(--admin-surface);border-right:1px solid var(--admin-line);padding:24px 16px;display:flex;flex-direction:column;}
+  .sidebar .brand{padding:8px 10px 24px;display:flex;align-items:center;gap:10px;color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:17px;}
+  .sidebar .horizon-mini{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--navy),var(--teal),var(--aqua),var(--coral));margin:0 10px 22px;}
+  .nav-group{margin-bottom:6px;}
+  .nav-group .nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--admin-text-dim);padding:14px 12px 8px;}
+  .nav-item{
+    display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;
+    font-size:13.5px;font-weight:500;color:var(--admin-text-dim);margin-bottom:2px;
+  }
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;}
+  .nav-item:hover{background:var(--admin-surface-2);color:#fff;}
+  .nav-item.active{background:var(--teal);color:#fff;}
+  .sidebar-foot{margin-top:auto;padding:14px 12px;border-top:1px solid var(--admin-line);display:flex;align-items:center;gap:10px;}
+  .sidebar-foot .av{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--teal),var(--aqua));flex-shrink:0;}
+  .sidebar-foot div h5{font-size:13px;color:#fff;margin:0;}
+  .sidebar-foot div p{font-size:11.5px;color:var(--admin-text-dim);margin:1px 0 0;}
+
+  /* Main */
+  .main{padding:28px 36px 60px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;}
+  .topbar h1{font-size:24px;color:#fff;}
+  .topbar p{font-size:13.5px;color:var(--admin-text-dim);margin-top:4px;}
+  .topbar-actions{display:flex;gap:10px;align-items:center;}
+  .icon-btn{width:38px;height:38px;border-radius:10px;background:var(--admin-surface);border:1px solid var(--admin-line);display:flex;align-items:center;justify-content:center;color:var(--admin-text-dim);}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px;}
+  .kpi-card{background:var(--admin-surface);border:1px solid var(--admin-line);border-radius:var(--r-md);padding:20px 22px;}
+  .kpi-card .top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .kpi-card .label{font-size:12.5px;color:var(--admin-text-dim);font-weight:600;}
+  .kpi-card .ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+  .kpi-card .val{font-family:'Fraunces',serif;font-size:30px;color:#fff;margin-top:10px;}
+  .kpi-card .delta{font-size:12px;margin-top:6px;display:flex;align-items:center;gap:4px;}
+  .delta.up{color:#3DD68C;}
+  .delta.down{color:#FF8A5C;}
+
+  .grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:18px;}
+  .panel{background:var(--admin-surface);border:1px solid var(--admin-line);border-radius:var(--r-md);padding:24px;}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .panel-head h3{font-size:15px;color:#fff;font-family:'Inter';font-weight:700;}
+  .panel-head .sub{font-size:12px;color:var(--admin-text-dim);}
+  .tab-pills{display:flex;gap:6px;}
+  .tab-pill{font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:999px;color:var(--admin-text-dim);}
+  .tab-pill.active{background:var(--admin-surface-2);color:#fff;}
+
+  /* fake bar chart */
+  .bar-chart{display:flex;align-items:flex-end;gap:10px;height:170px;}
+  .bar-chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .bar-chart .bar{width:100%;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,var(--aqua),var(--teal));position:relative;}
+  .bar-chart .bar.peak{background:linear-gradient(180deg,var(--coral),#E2693B);}
+  .bar-chart .col span{font-size:10.5px;color:var(--admin-text-dim);}
+
+  .occ-row{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--admin-line);}
+  .occ-row:last-child{border-bottom:none;}
+  .occ-row .ship-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .occ-row .name{font-size:13px;font-weight:600;color:#fff;width:140px;flex-shrink:0;}
+  .occ-bar-track{flex:1;height:8px;border-radius:99px;background:var(--admin-surface-2);overflow:hidden;}
+  .occ-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--aqua));}
+  .occ-row .pct{font-size:12.5px;font-weight:700;color:#fff;width:42px;text-align:right;}
+
+  table.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+  table.data-table th{
+    text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--admin-text-dim);
+    padding:0 14px 12px;font-weight:600;
+  }
+  table.data-table td{padding:13px 14px;border-top:1px solid var(--admin-line);color:var(--admin-text);}
+  table.data-table tr:hover td{background:var(--admin-surface-2);}
+  .status-chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;}
+  .status-chip.confirmed{background:rgba(61,214,140,.15);color:#3DD68C;}
+  .status-chip.pending{background:rgba(255,138,92,.15);color:var(--coral);}
+  .status-chip.cancelled{background:rgba(255,90,90,.15);color:#FF6B6B;}
+
+  .alert-row{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--admin-line);}
+  .alert-row:last-child{border-bottom:none;}
+  .alert-row .dot-ic{width:8px;height:8px;border-radius:50%;background:var(--coral);margin-top:6px;flex-shrink:0;}
+  .alert-row h5{font-size:13px;color:#fff;margin:0;font-weight:600;}
+  .alert-row p{font-size:12px;color:var(--admin-text-dim);margin:2px 0 0;}
+
+  @media(max-width:1100px){
+    .admin-shell{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .kpi-grid{grid-template-columns:1fr 1fr;}
+    .grid-2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="mark" style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--aqua));display:flex;align-items:center;justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </span>
+      Meridian Admin
+    </div>
+    <div class="horizon-mini"></div>
+
+    <div class="nav-group">
+      <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Fleet</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0"/><path d="M5 13l1-7h12l1 7"/></svg>Ships &amp; Cabins</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Cruise Schedules</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/></svg>Destinations</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Operations</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>Bookings</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg>Venues &amp; Events</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Inventory</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">People</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>Staff &amp; Roles</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Insights</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>Reports</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H5.5L4 18V4z"/></svg>AI Assistant Logs</div>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="av"></div>
+      <div>
+        <h5>Ama Owusu</h5>
+        <p>Operations Manager</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>Good afternoon, Ama</h1>
+        <p>Here's how the fleet is performing today — Friday, June 26, 2026</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="icon-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></button>
+        <a href="index.html" class="btn btn-ghost btn-sm" style="color:#fff;border-color:var(--admin-line);">View Storefront →</a>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="top">
+          <span class="label">Revenue (MTD)</span>
+          <div class="ic" style="background:rgba(79,195,217,.15);color:var(--aqua);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+        </div>
+        <div class="val">$486,210</div>
+        <div class="delta up">↑ 12.4% vs last month</div>
+      </div>
+      <div class="kpi-card">
+        <div class="top">
+          <span class="label">New Bookings Today</span>
+          <div class="ic" style="background:rgba(61,214,140,.15);color:#3DD68C;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>
+          </div>
+        </div>
+        <div class="val">37</div>
+        <div class="delta up">↑ 8 vs yesterday</div>
+      </div>
+      <div class="kpi-card">
+        <div class="top">
+          <span class="label">Avg. Fleet Occupancy</span>
+          <div class="ic" style="background:rgba(255,138,92,.15);color:var(--coral);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0"/><path d="M5 13l1-7h12l1 7"/></svg>
+          </div>
+        </div>
+        <div class="val">82%</div>
+        <div class="delta down">↓ 3pts vs last week</div>
+      </div>
+      <div class="kpi-card">
+        <div class="top">
+          <span class="label">Venue Utilization</span>
+          <div class="ic" style="background:rgba(15,110,140,.18);color:var(--teal);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg>
+          </div>
+        </div>
+        <div class="val">64%</div>
+        <div class="delta up">↑ 6pts vs last week</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Revenue — Last 14 Days</h3>
+            <p class="sub">Cruise, venue, and package revenue combined</p>
+          </div>
+          <div class="tab-pills">
+            <span class="tab-pill">7D</span>
+            <span class="tab-pill active">14D</span>
+            <span class="tab-pill">90D</span>
+          </div>
+        </div>
+        <div class="bar-chart">
+          <div class="col"><div class="bar" style="height:58%;"></div><span>12</span></div>
+          <div class="col"><div class="bar" style="height:71%;"></div><span>13</span></div>
+          <div class="col"><div class="bar" style="height:48%;"></div><span>14</span></div>
+          <div class="col"><div class="bar" style="height:65%;"></div><span>15</span></div>
+          <div class="col"><div class="bar" style="height:80%;"></div><span>16</span></div>
+          <div class="col"><div class="bar" style="height:54%;"></div><span>17</span></div>
+          <div class="col"><div class="bar" style="height:62%;"></div><span>18</span></div>
+          <div class="col"><div class="bar" style="height:90%;"></div><span>19</span></div>
+          <div class="col"><div class="bar" style="height:73%;"></div><span>20</span></div>
+          <div class="col"><div class="bar" style="height:84%;"></div><span>21</span></div>
+          <div class="col"><div class="bar" style="height:67%;"></div><span>22</span></div>
+          <div class="col"><div class="bar" style="height:77%;"></div><span>23</span></div>
+          <div class="col"><div class="bar" style="height:69%;"></div><span>24</span></div>
+          <div class="col"><div class="bar peak" style="height:97%;"></div><span>25</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Occupancy by Ship</h3>
+            <p class="sub">Current sailing capacity</p>
+          </div>
+        </div>
+        <div class="occ-row">
+          <span class="ship-dot" style="background:var(--aqua);"></span>
+          <span class="name">Horizon of the Seas</span>
+          <div class="occ-bar-track"><div class="occ-bar-fill" style="width:91%;"></div></div>
+          <span class="pct">91%</span>
+        </div>
+        <div class="occ-row">
+          <span class="ship-dot" style="background:var(--teal);"></span>
+          <span class="name">Meridian Serenity</span>
+          <div class="occ-bar-track"><div class="occ-bar-fill" style="width:76%;"></div></div>
+          <span class="pct">76%</span>
+        </div>
+        <div class="occ-row">
+          <span class="ship-dot" style="background:var(--coral);"></span>
+          <span class="name">Aurora Wave</span>
+          <div class="occ-bar-track"><div class="occ-bar-fill" style="width:68%;"></div></div>
+          <span class="pct">68%</span>
+        </div>
+        <div class="panel-head" style="margin-top:24px;margin-bottom:14px;">
+          <div><h3>Low Stock Alerts</h3></div>
+        </div>
+        <div class="alert-row">
+          <div class="dot-ic"></div>
+          <div><h5>Galley — Fresh Produce</h5><p>Horizon of the Seas · 8% of reorder threshold</p></div>
+        </div>
+        <div class="alert-row">
+          <div class="dot-ic"></div>
+          <div><h5>Retail — Sun Care SPF 50</h5><p>Aurora Wave · Below threshold</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns:1fr;">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Recent Bookings</h3>
+            <p class="sub">Across all ships and venues</p>
+          </div>
+          <a href="#" style="font-size:12.5px;color:var(--aqua);font-weight:600;">View all →</a>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Reference</th><th>Customer</th><th>Type</th><th>Sailing / Date</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MV-20481</td><td>Kwame Asante</td><td>Cruise — Balcony</td><td>Horizon · Aug 8</td><td>$2,498</td>
+              <td><span class="status-chip confirmed">● Confirmed</span></td>
+            </tr>
+            <tr>
+              <td>MV-20480</td><td>Linda Forson</td><td>Venue — Wedding Reception</td><td>Aug 10</td><td>$2,400</td>
+              <td><span class="status-chip pending">● Pending</span></td>
+            </tr>
+            <tr>
+              <td>MV-20479</td><td>James &amp; Wei Chen</td><td>Cruise — Honeymoon Pkg</td><td>Serenity · Sep 2</td><td>$2,729</td>
+              <td><span class="status-chip confirmed">● Confirmed</span></td>
+            </tr>
+            <tr>
+              <td>MV-20478</td><td>Adwoa Boateng</td><td>Cruise — Interior</td><td>Aurora · Aug 19</td><td>$649</td>
+              <td><span class="status-chip cancelled">● Cancelled</span></td>
+            </tr>
+            <tr>
+              <td>MV-20477</td><td>Michael Owusu</td><td>Venue — Corporate Event</td><td>Aug 14</td><td>$1,140</td>
+              <td><span class="status-chip confirmed">● Confirmed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Definite Travel — Browse Cruises</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  .hero{position:relative;overflow:hidden;background:radial-gradient(120% 100% at 80% 0%, #103a56 0%, var(--navy) 45%, var(--navy-deep) 100%);}
+  .hero-waves{position:absolute;inset:0;opacity:.5;}
+  .hero .wrap{position:relative;z-index:2;padding-top:88px;padding-bottom:88px;}
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;}
+  .hero h1{font-size:54px;color:#fff;max-width:560px;}
+  .hero h1 em{font-style:normal;color:var(--aqua);}
+  .hero p.lede{color:#B9CBDC;font-size:17px;line-height:1.65;max-width:460px;margin-top:20px;}
+  .hero-cta-row{display:flex;gap:14px;margin-top:34px;}
+  .stat-row{display:flex;gap:36px;margin-top:48px;}
+  .stat-row .stat b{display:block;font-family:'Fraunces',serif;font-size:26px;color:#fff;}
+  .stat-row .stat span{font-size:12.5px;color:#8FA4BC;text-transform:uppercase;letter-spacing:.05em;}
+
+  .hero-card{
+    background:#fff;border-radius:var(--r-lg);box-shadow:var(--shadow-lg);
+    padding:28px;position:relative;
+  }
+  .hero-card .ship-tag{position:absolute;top:-14px;left:28px;}
+  .hero-card .ship-photo{
+    height:190px;border-radius:var(--r-md);
+    background:linear-gradient(135deg,#1c6e8c,#3fb6cf 60%,#9fe3ef);
+    position:relative;overflow:hidden;margin-bottom:18px;
+  }
+  .hero-card .ship-photo svg{position:absolute;bottom:0;left:0;width:100%;}
+  .hero-card h3{font-size:21px;margin-bottom:4px;}
+  .hero-card .route{font-size:13.5px;color:var(--ink-soft);margin-bottom:16px;}
+  .hero-card .price-row{display:flex;align-items:baseline;justify-content:space-between;padding-top:16px;border-top:1px solid var(--line);}
+  .hero-card .price-row .from{font-size:12px;color:var(--ink-soft);}
+  .hero-card .price-row .amt{font-family:'Fraunces',serif;font-size:26px;color:var(--navy);}
+
+  /* Search bar */
+  .search-bar{
+    background:#fff;border-radius:999px;box-shadow:var(--shadow-lg);
+    padding:8px;display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:4px;
+    margin-top:-34px;position:relative;z-index:5;
+  }
+  .search-field{padding:14px 22px;border-radius:999px;}
+  .search-field:hover{background:var(--foam);}
+  .search-field .label{display:block;margin-bottom:3px;}
+  .search-field select, .search-field input{
+    border:none;background:none;font-size:14.5px;font-weight:600;color:var(--navy);width:100%;font-family:inherit;
+  }
+  .search-bar .btn{margin:4px;}
+
+  section.section{padding:96px 0;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:44px;}
+  .section-head h2{font-size:36px;max-width:520px;margin-top:10px;}
+  .section-head p{color:var(--ink-soft);font-size:15px;max-width:380px;line-height:1.6;}
+
+  .ship-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .ship-card{overflow:hidden;transition:transform .2s, box-shadow .2s;}
+  .ship-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);}
+  .ship-card .photo{height:200px;position:relative;}
+  .ship-card .photo .pill{position:absolute;top:14px;left:14px;}
+  .ship-card .body{padding:22px;}
+  .ship-card .meta-row{display:flex;gap:16px;margin:14px 0 18px;font-size:13px;color:var(--ink-soft);}
+  .ship-card .meta-row span{display:flex;align-items:center;gap:5px;}
+  .ship-card .foot{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--line);}
+  .ship-card .foot .amt{font-family:'Fraunces',serif;font-size:20px;color:var(--navy);}
+  .ship-card .foot .amt small{font-family:'Inter';font-size:11px;color:var(--ink-soft);font-weight:500;}
+
+  .dest-strip{display:flex;gap:20px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;}
+  .dest-strip::-webkit-scrollbar{display:none;}
+  .dest-card{flex:0 0 260px;border-radius:var(--r-md);overflow:hidden;position:relative;height:320px;}
+  .dest-card .img{position:absolute;inset:0;}
+  .dest-card .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,37,64,0) 30%,rgba(7,26,48,.92) 100%);}
+  .dest-card .info{position:absolute;bottom:0;left:0;right:0;padding:22px;color:#fff;}
+  .dest-card .info .count{font-size:12px;color:#A9C3D9;margin-top:4px;}
+  .dest-card .info h3{font-size:21px;color:#fff;}
+
+  .why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line);}
+  .why-item{background:#fff;padding:32px 26px;}
+  .why-item .ic{width:40px;height:40px;border-radius:10px;background:var(--aqua-soft);display:flex;align-items:center;justify-content:center;color:var(--teal);margin-bottom:18px;}
+  .why-item h4{font-family:'Inter';font-size:15.5px;font-weight:700;margin-bottom:8px;}
+  .why-item p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin:0;}
+
+  .ai-teaser{
+    background:linear-gradient(120deg,var(--navy) 0%, #0c3a56 60%, var(--teal) 130%);
+    border-radius:var(--r-lg);padding:56px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:32px;color:#fff;position:relative;overflow:hidden;
+  }
+  .ai-teaser::after{content:'';position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(79,195,217,.35),transparent 70%);}
+  .ai-teaser h3{font-size:28px;color:#fff;max-width:440px;}
+  .ai-teaser p{color:#C7DCEA;margin-top:12px;max-width:420px;font-size:14.5px;line-height:1.6;}
+
+  /* Floating chat bubble */
+  .chat-fab{
+    position:fixed;bottom:28px;right:28px;z-index:60;
+    width:60px;height:60px;border-radius:50%;
+    background:linear-gradient(135deg,var(--teal),var(--aqua));
+    box-shadow:0 14px 28px -8px rgba(15,110,140,.5);
+    display:flex;align-items:center;justify-content:center;color:#fff;
+  }
+  .chat-fab .ping{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--coral);border:2px solid #fff;}
+
+  @media(max-width:980px){
+    .hero-grid{grid-template-columns:1fr;}
+    .ship-grid{grid-template-columns:1fr 1fr;}
+    .why-grid{grid-template-columns:1fr 1fr;}
+    .search-bar{grid-template-columns:1fr;border-radius:24px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M5 13l1-7h12l1 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6V3" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </span>
+      Meridian Voyages
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Cruises</a>
+      <a href="cruise-detail.html">Destinations</a>
+      <a href="venue-booking.html">Venues &amp; Events</a>
+      <a href="#">Packages</a>
+      <a href="#">My Bookings</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="cruise-detail.html" class="btn btn-primary btn-sm">Book a Cruise</a>
+    </div>
+  </div>
+</nav>
+<div class="horizon"></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">152 sailings open for booking</p>
+        <h1>Find your next <em>horizon</em>, then go find it.</h1>
+        <p class="lede">Browse our full fleet, compare itineraries by destination, and book cabins, dining, and onboard venues — all in one place, with an AI assistant on hand the moment you have questions.</p>
+        <div class="hero-cta-row">
+          <a href="cruise-detail.html" class="btn btn-accent">Explore Cruises</a>
+          <a href="#fleet" class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.3);">View the Fleet</a>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><b>14</b><span>Ships in fleet</span></div>
+          <div class="stat"><b>46</b><span>Destinations</span></div>
+          <div class="stat"><b>98%</b><span>Guest satisfaction</span></div>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="ship-tag pill coral"><span class="pill-dot"></span>Most booked this week</div>
+        <div class="ship-photo">
+          <svg viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg"><path d="M0 50 Q 100 20 200 50 T 400 50 V80 H0 Z" fill="rgba(255,255,255,.18)"/><path d="M0 65 Q 100 40 200 65 T 400 65 V80 H0 Z" fill="rgba(255,255,255,.28)"/></svg>
+        </div>
+        <h3>Horizon of the Seas</h3>
+        <p class="route">7-Night Caribbean Explorer · Miami → Nassau → St. Thomas</p>
+        <div class="price-row">
+          <div>
+            <div class="from">Starting from</div>
+            <div class="amt">$1,249</div>
+          </div>
+          <a href="cruise-detail.html" class="btn btn-primary btn-sm">View Cruise</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="search-bar">
+    <div class="search-field">
+      <span class="label">Destination</span>
+      <select><option>Anywhere</option><option>Caribbean</option><option>Mediterranean</option><option>Northern Europe</option><option>Asia Pacific</option></select>
+    </div>
+    <div class="search-field">
+      <span class="label">Departure month</span>
+      <select><option>Any month</option><option>July 2026</option><option>August 2026</option><option>September 2026</option></select>
+    </div>
+    <div class="search-field">
+      <span class="label">Guests</span>
+      <select><option>2 Adults</option><option>2 Adults, 1 Child</option><option>4 Adults</option><option>Solo traveller</option></select>
+    </div>
+    <button class="btn btn-primary">Search Cruises</button>
+  </div>
+</div>
+
+<section class="section" id="fleet">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">The fleet</p>
+        <h2>Three ships, three very different ways to sail.</h2>
+      </div>
+      <p>Every ship carries its own character — from family-first water parks to adults-only quiet decks. Filter the full fleet by amenity once you're aboard the live site.</p>
+    </div>
+
+    <div class="ship-grid">
+      <div class="card ship-card">
+        <div class="photo" style="background:linear-gradient(135deg,#0F6E8C,#4FC3D9);">
+          <span class="pill navy">Family Favourite</span>
+        </div>
+        <div class="body">
+          <h3>Horizon of the Seas</h3>
+          <p class="route" style="color:var(--ink-soft);font-size:13.5px;">Caribbean · 7 nights</p>
+          <div class="meta-row">
+            <span>⚓ 2,800 guests</span>
+            <span>🛏 18 decks</span>
+            <span>★ 4.8</span>
+          </div>
+          <div class="foot">
+            <div class="amt">$1,249<small> / from</small></div>
+            <a href="cruise-detail.html" class="btn btn-ghost btn-sm">Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ship-card">
+        <div class="photo" style="background:linear-gradient(135deg,#0A2540,#0F6E8C);">
+          <span class="pill coral">Adults Only</span>
+        </div>
+        <div class="body">
+          <h3>Meridian Serenity</h3>
+          <p class="route" style="color:var(--ink-soft);font-size:13.5px;">Mediterranean · 10 nights</p>
+          <div class="meta-row">
+            <span>⚓ 1,400 guests</span>
+            <span>🛏 12 decks</span>
+            <span>★ 4.9</span>
+          </div>
+          <div class="foot">
+            <div class="amt">$2,180<small> / from</small></div>
+            <a href="cruise-detail.html" class="btn btn-ghost btn-sm">Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ship-card">
+        <div class="photo" style="background:linear-gradient(135deg,#1c6e8c,#9fe3ef);">
+          <span class="pill navy">New for 2026</span>
+        </div>
+        <div class="body">
+          <h3>Aurora Wave</h3>
+          <p class="route" style="color:var(--ink-soft);font-size:13.5px;">Northern Europe · 12 nights</p>
+          <div class="meta-row">
+            <span>⚓ 2,100 guests</span>
+            <span>🛏 15 decks</span>
+            <span>★ 4.7</span>
+          </div>
+          <div class="foot">
+            <div class="amt">$2,640<small> / from</small></div>
+            <a href="cruise-detail.html" class="btn btn-ghost btn-sm">Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Where to next</p>
+        <h2>Destinations our guests return to.</h2>
+      </div>
+      <p>Each destination page lists every sailing that stops there, with port times and shore excursions.</p>
+    </div>
+
+    <div class="dest-strip">
+      <div class="dest-card">
+        <div class="img" style="background:linear-gradient(160deg,#1c5f7a,#4fc3d9);"></div>
+        <div class="scrim"></div>
+        <div class="info"><h3>Nassau, Bahamas</h3><div class="count">22 sailings call here</div></div>
+      </div>
+      <div class="dest-card">
+        <div class="img" style="background:linear-gradient(160deg,#0A2540,#0F6E8C);"></div>
+        <div class="scrim"></div>
+        <div class="info"><h3>Santorini, Greece</h3><div class="count">14 sailings call here</div></div>
+      </div>
+      <div class="dest-card">
+        <div class="img" style="background:linear-gradient(160deg,#16486b,#3fa8c2);"></div>
+        <div class="scrim"></div>
+        <div class="info"><h3>St. Thomas, USVI</h3><div class="count">19 sailings call here</div></div>
+      </div>
+      <div class="dest-card">
+        <div class="img" style="background:linear-gradient(160deg,#0c3a56,#2c8aa8);"></div>
+        <div class="scrim"></div>
+        <div class="info"><h3>Bergen, Norway</h3><div class="count">9 sailings call here</div></div>
+      </div>
+      <div class="dest-card">
+        <div class="img" style="background:linear-gradient(160deg,#1a567a,#5cc8de);"></div>
+        <div class="scrim"></div>
+        <div class="info"><h3>Dubrovnik, Croatia</h3><div class="count">11 sailings call here</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <h4>Real-time cabin availability</h4>
+        <p>No waitlist guesswork — every cabin shown is bookable right now.</p>
+      </div>
+      <div class="why-item">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-7-10a4.5 4.5 0 0 1 7-3.5A4.5 4.5 0 0 1 19 11c0 5.5-7 10-7 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <h4>Built for honeymoons &amp; families alike</h4>
+        <p>Filter packages by occasion — our assistant can shortlist for you.</p>
+      </div>
+      <div class="why-item">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h4>Instant venue &amp; event booking</h4>
+        <p>Reserve onboard venues for private events alongside your cruise.</p>
+      </div>
+      <div class="why-item">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v12H5.5L4 18V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <h4>Ask, don't search</h4>
+        <p>Our AI assistant answers from live ship data — not guesses.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="ai-teaser">
+      <div>
+        <p class="eyebrow" style="color:#8FE3F2;">Meet the assistant</p>
+        <h3>"I need a honeymoon cruise" is a perfectly good way to start.</h3>
+        <p>Ask about cabins, venues, dining, or packages in plain language — it checks live availability before it answers.</p>
+      </div>
+      <a href="#" id="openChatFromTeaser" class="btn btn-accent">Try the AI Assistant</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="index.html" style="color:#fff;margin-bottom:14px;display:flex;">
+        <span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M5 13l1-7h12l1 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        Meridian Voyages
+      </a>
+      <p style="font-size:13.5px;max-width:280px;line-height:1.6;">A cruise booking and onboard experience platform — ships, cabins, venues, and dining, all in one place.</p>
+    </div>
+    <div><h4>Explore</h4><ul><li>All Cruises</li><li>Destinations</li><li>The Fleet</li><li>Packages</li></ul></div>
+    <div><h4>Manage</h4><ul><li>My Bookings</li><li>Venue Bookings</li><li>Dining Reservations</li><li>Help Centre</li></ul></div>
+    <div><h4>Company</h4><ul><li>About</li><li>Careers</li><li>Press</li><li>Contact</li></ul></div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 Meridian Voyages. Exhibition prototype — not a live booking system.</span>
+    <span>Designed for client preview</span>
+  </div>
+</footer>
+
+<button class="chat-fab" id="chatFab" aria-label="Open AI Assistant">
+  <span class="ping"></span>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v12H5.5L4 18V4z" stroke="white" stroke-width="2" stroke-linejoin="round"/></svg>
+</button>
+
+<script>
+  document.getElementById('chatFab').addEventListener('click', ()=>{ window.location.href='ai-chat.html'; });
+  document.getElementById('openChatFromTeaser').addEventListener('click', (e)=>{ e.preventDefault(); window.location.href='ai-chat.html'; });
+</script>
+</body>
+</html>

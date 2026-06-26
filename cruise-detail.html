@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horizon of the Seas — 7-Night Caribbean Explorer | Definite Travel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  .detail-hero{position:relative;height:420px;background:linear-gradient(135deg,#0c3a56 0%,#0F6E8C 55%,#4FC3D9 100%);overflow:hidden;}
+  .detail-hero .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,26,48,.15) 0%, rgba(7,26,48,.75) 100%);}
+  .detail-hero .wrap{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:36px;}
+  .detail-hero .crumbs{color:#BFD8E8;font-size:13px;margin-bottom:14px;}
+  .detail-hero .crumbs a{color:#BFD8E8;}
+  .detail-hero h1{color:#fff;font-size:42px;max-width:640px;}
+  .detail-hero .sub{color:#D7E7F0;font-size:15px;margin-top:10px;display:flex;gap:18px;flex-wrap:wrap;}
+  .detail-hero .sub span{display:flex;align-items:center;gap:6px;}
+
+  .layout{display:grid;grid-template-columns:1fr 380px;gap:44px;align-items:start;margin-top:48px;}
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:32px;}
+  .tab{padding:12px 4px;margin-right:28px;font-size:14.5px;font-weight:600;color:var(--ink-soft);border-bottom:2px solid transparent;cursor:pointer;}
+  .tab.active{color:var(--navy);border-color:var(--coral);}
+
+  .itinerary-step{display:grid;grid-template-columns:64px 1fr;gap:18px;padding:20px 0;border-bottom:1px solid var(--line);}
+  .itinerary-step:last-child{border-bottom:none;}
+  .itinerary-step .day{width:64px;height:64px;border-radius:var(--r-md);background:var(--aqua-soft);color:var(--teal);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Fraunces',serif;}
+  .itinerary-step .day b{font-size:20px;}
+  .itinerary-step .day span{font-size:10px;text-transform:uppercase;letter-spacing:.04em;}
+  .itinerary-step h4{font-size:16.5px;margin-bottom:4px;}
+  .itinerary-step p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.55;}
+  .itinerary-step .port-time{font-size:12px;color:var(--teal);font-weight:600;margin-top:6px;}
+
+  .cabin-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .cabin-opt{border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px;cursor:pointer;transition:border-color .15s, box-shadow .15s;position:relative;}
+  .cabin-opt:hover{border-color:var(--aqua);}
+  .cabin-opt.selected{border-color:var(--teal);box-shadow:0 0 0 3px var(--aqua-soft);}
+  .cabin-opt .check{position:absolute;top:14px;right:14px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);}
+  .cabin-opt.selected .check{background:var(--teal);border-color:var(--teal);}
+  .cabin-opt.selected .check::after{content:'✓';color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;height:100%;}
+  .cabin-opt h4{font-size:15.5px;margin-bottom:4px;}
+  .cabin-opt .occ{font-size:12px;color:var(--ink-soft);margin-bottom:10px;}
+  .cabin-opt .price{font-family:'Fraunces',serif;font-size:19px;color:var(--navy);}
+  .cabin-opt .avail{font-size:11.5px;color:var(--coral);font-weight:600;margin-top:6px;}
+
+  .dining-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);}
+  .dining-row:last-child{border-bottom:none;}
+  .dining-row .info h4{font-size:15px;margin-bottom:3px;}
+  .dining-row .info p{font-size:12.5px;color:var(--ink-soft);margin:0;}
+
+  /* Booking summary card (sticky) */
+  .booking-card{position:sticky;top:96px;padding:26px;}
+  .booking-card .ship-mini{display:flex;gap:12px;align-items:center;margin-bottom:20px;}
+  .booking-card .ship-mini .thumb{width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,#0F6E8C,#4FC3D9);flex-shrink:0;}
+  .booking-card .ship-mini h4{font-size:15px;}
+  .booking-card .ship-mini p{font-size:12px;color:var(--ink-soft);margin:2px 0 0;}
+
+  .summary-row{display:flex;justify-content:space-between;font-size:13.5px;padding:10px 0;color:var(--ink-soft);}
+  .summary-row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:16px;font-size:15px;font-weight:700;color:var(--navy);}
+  .summary-row b{color:var(--ink);font-weight:600;}
+
+  .stepper{display:flex;align-items:center;gap:6px;margin-bottom:22px;}
+  .stepper .dot{width:8px;height:8px;border-radius:50%;background:var(--line);}
+  .stepper .dot.done{background:var(--teal);}
+  .stepper .dot.cur{background:var(--coral);width:22px;border-radius:5px;}
+  .stepper .seg{flex:1;height:1px;background:var(--line);}
+
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;}
+  .field input, .field select{
+    width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:var(--r-sm);font-size:14px;font-family:inherit;
+  }
+  .field input:focus, .field select:focus{border-color:var(--teal);outline:none;}
+
+  .addon-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .addon-row:last-child{border-bottom:none;}
+  .toggle{width:38px;height:22px;border-radius:99px;background:var(--line);position:relative;flex-shrink:0;transition:background .15s;}
+  .toggle.on{background:var(--teal);}
+  .toggle .knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .toggle.on .knob{left:18px;}
+
+  @media(max-width:980px){
+    .layout{grid-template-columns:1fr;}
+    .booking-card{position:static;}
+    .cabin-type-grid{grid-template-columns:1fr;}
+    .field-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M5 13l1-7h12l1 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      Definite Travel
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Cruises</a>
+      <a href="cruise-detail.html" class="active">Destinations</a>
+      <a href="venue-booking.html">Venues &amp; Events</a>
+      <a href="#">Packages</a>
+      <a href="#">My Bookings</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="admin-dashboard.html" class="btn btn-primary btn-sm">Admin View</a>
+    </div>
+  </div>
+</nav>
+<div class="horizon"></div>
+
+<header class="detail-hero">
+  <div class="scrim"></div>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Cruises</a> &nbsp;/&nbsp; Caribbean &nbsp;/&nbsp; Horizon of the Seas</div>
+    <h1>7-Night Caribbean Explorer</h1>
+    <div class="sub">
+      <span>⚓ Horizon of the Seas</span>
+      <span>📍 Miami → Nassau → St. Thomas → Miami</span>
+      <span>★ 4.8 (2,140 reviews)</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <!-- LEFT: details + selection -->
+    <div>
+      <div class="tabs">
+        <div class="tab active" data-tab="itinerary">Itinerary</div>
+        <div class="tab" data-tab="cabins">Choose Cabin</div>
+        <div class="tab" data-tab="dining">Dining</div>
+        <div class="tab" data-tab="packages">Packages</div>
+      </div>
+
+      <!-- ITINERARY -->
+      <div class="tab-panel" id="panel-itinerary">
+        <p class="eyebrow">7 nights · 4 destinations</p>
+        <h2 style="font-size:24px;margin:10px 0 24px;">Day-by-day itinerary</h2>
+
+        <div class="itinerary-step">
+          <div class="day"><b>1</b><span>Sat</span></div>
+          <div>
+            <h4>Depart Miami, Florida</h4>
+            <p>Board from 11:00 AM. Sail away party on the pool deck at sunset.</p>
+            <div class="port-time">Departs 5:00 PM</div>
+          </div>
+        </div>
+        <div class="itinerary-step">
+          <div class="day"><b>2</b><span>Sun</span></div>
+          <div>
+            <h4>Day at Sea</h4>
+            <p>Full day of onboard activities — spa, shows, and the AI-recommended dining slots open today.</p>
+          </div>
+        </div>
+        <div class="itinerary-step">
+          <div class="day"><b>3</b><span>Mon</span></div>
+          <div>
+            <h4>Nassau, Bahamas</h4>
+            <p>Explore Cable Beach or book a shore excursion through Venues &amp; Events.</p>
+            <div class="port-time">8:00 AM – 5:00 PM</div>
+          </div>
+        </div>
+        <div class="itinerary-step">
+          <div class="day"><b>4</b><span>Tue</span></div>
+          <div>
+            <h4>St. Thomas, USVI</h4>
+            <p>Duty-free shopping and Magens Bay beach access.</p>
+            <div class="port-time">7:00 AM – 4:00 PM</div>
+          </div>
+        </div>
+        <div class="itinerary-step">
+          <div class="day"><b>5</b><span>Wed</span></div>
+          <div>
+            <h4>Day at Sea</h4>
+            <p>Formal night — The Captain's Table dining reservation recommended.</p>
+          </div>
+        </div>
+        <div class="itinerary-step">
+          <div class="day"><b>6</b><span>Thu</span></div>
+          <div>
+            <h4>Day at Sea</h4>
+            <p>Wind-down day — pool deck, spa slots fill quickly, book early.</p>
+          </div>
+        </div>
+        <div class="itinerary-step">
+          <div class="day"><b>7</b><span>Fri</span></div>
+          <div>
+            <h4>Return to Miami</h4>
+            <p>Disembarkation begins 7:00 AM.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CABINS -->
+      <div class="tab-panel" id="panel-cabins" style="display:none;">
+        <p class="eyebrow">Step 1 of 3</p>
+        <h2 style="font-size:24px;margin:10px 0 6px;">Choose your cabin</h2>
+        <p style="color:var(--ink-soft);font-size:14px;margin-bottom:24px;">Prices shown are per guest, based on double occupancy, for this sailing date.</p>
+
+        <div class="cabin-type-grid">
+          <div class="cabin-opt" data-price="649" data-name="Interior Cabin">
+            <div class="check"></div>
+            <h4>Interior Cabin</h4>
+            <div class="occ">Sleeps up to 4 · Deck 4–6</div>
+            <div class="price">$649</div>
+            <div class="avail">23 cabins left</div>
+          </div>
+          <div class="cabin-opt selected" data-price="899" data-name="Ocean View">
+            <div class="check"></div>
+            <h4>Ocean View</h4>
+            <div class="occ">Sleeps up to 4 · Deck 7–9</div>
+            <div class="price">$899</div>
+            <div class="avail">11 cabins left</div>
+          </div>
+          <div class="cabin-opt" data-price="1249" data-name="Balcony Cabin">
+            <div class="check"></div>
+            <h4>Balcony Cabin</h4>
+            <div class="occ">Sleeps up to 4 · Deck 9–11</div>
+            <div class="price">$1,249</div>
+            <div class="avail">6 cabins left</div>
+          </div>
+          <div class="cabin-opt" data-price="2380" data-name="Owner's Suite">
+            <div class="check"></div>
+            <h4>Owner's Suite</h4>
+            <div class="occ">Sleeps up to 6 · Deck 12</div>
+            <div class="price">$2,380</div>
+            <div class="avail">Only 2 left</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DINING -->
+      <div class="tab-panel" id="panel-dining" style="display:none;">
+        <p class="eyebrow">Optional</p>
+        <h2 style="font-size:24px;margin:10px 0 24px;">Reserve dining</h2>
+        <div class="card" style="padding:8px 24px;">
+          <div class="dining-row">
+            <div class="info"><h4>The Captain's Table</h4><p>Fine dining · Smart casual · Included in fare</p></div>
+            <a href="#" class="btn btn-ghost btn-sm">Reserve</a>
+          </div>
+          <div class="dining-row">
+            <div class="info"><h4>Horizon Buffet, Deck 9</h4><p>Casual all-day dining · Included in fare</p></div>
+            <a href="#" class="btn btn-ghost btn-sm">Reserve</a>
+          </div>
+          <div class="dining-row">
+            <div class="info"><h4>Sakura Teppanyaki</h4><p>Specialty dining · +$45/guest</p></div>
+            <a href="#" class="btn btn-ghost btn-sm">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PACKAGES -->
+      <div class="tab-panel" id="panel-packages" style="display:none;">
+        <p class="eyebrow">Optional</p>
+        <h2 style="font-size:24px;margin:10px 0 24px;">Add a package</h2>
+        <div class="addon-row">
+          <div>
+            <h4 style="font-size:14.5px;margin-bottom:3px;">Honeymoon Package</h4>
+            <p style="font-size:12.5px;color:var(--ink-soft);margin:0;">Champagne, room decor, couples spa credit — $189</p>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"><div class="knob"></div></div>
+        </div>
+        <div class="addon-row">
+          <div>
+            <h4 style="font-size:14.5px;margin-bottom:3px;">All-Inclusive Drinks</h4>
+            <p style="font-size:12.5px;color:var(--ink-soft);margin:0;">Unlimited beverage package for the sailing — $79/guest</p>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div>
+        </div>
+        <div class="addon-row">
+          <div>
+            <h4 style="font-size:14.5px;margin-bottom:3px;">Shore Excursion Bundle</h4>
+            <p style="font-size:12.5px;color:var(--ink-soft);margin:0;">Three guided excursions across ports — $210</p>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"><div class="knob"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: booking summary -->
+    <div class="card booking-card">
+      <div class="stepper">
+        <div class="dot done"></div><div class="seg"></div>
+        <div class="dot cur"></div><div class="seg"></div>
+        <div class="dot"></div>
+      </div>
+
+      <div class="ship-mini">
+        <div class="thumb"></div>
+        <div>
+          <h4>Horizon of the Seas</h4>
+          <p>Sat, Aug 8 — Fri, Aug 15, 2026</p>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field"><label>Guests</label><select><option>2 Adults</option><option>2 Adults, 1 Child</option></select></div>
+        <div class="field"><label>Cabins</label><select><option>1 Cabin</option><option>2 Cabins</option></select></div>
+      </div>
+
+      <div class="field">
+        <label>Lead guest name</label>
+        <input type="text" placeholder="Full name">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" placeholder="you@example.com">
+      </div>
+
+      <div style="margin-top:8px;">
+        <div class="summary-row"><span>Ocean View cabin × 2 guests</span><b id="sumCabin">$1,798</b></div>
+        <div class="summary-row"><span>All-Inclusive Drinks × 2</span><b>$158</b></div>
+        <div class="summary-row"><span>Port &amp; service fees</span><b>$214</b></div>
+        <div class="summary-row total"><span>Total due today</span><span id="sumTotal">$2,170</span></div>
+      </div>
+
+      <a href="#" class="btn btn-accent btn-block" style="margin-top:18px;">Continue to Payment</a>
+      <p style="text-align:center;font-size:12px;color:var(--ink-soft);margin-top:12px;">Free cancellation up to 48 hours before departure</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer" style="margin-top:80px;">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="index.html" style="color:#fff;margin-bottom:14px;display:flex;">
+        <span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></span>
+        Definite Travel
+      </a>
+      <p style="font-size:13.5px;max-width:280px;line-height:1.6;">A cruise booking and onboard experience platform.</p>
+    </div>
+    <div><h4>Explore</h4><ul><li>All Cruises</li><li>Destinations</li><li>The Fleet</li></ul></div>
+    <div><h4>Manage</h4><ul><li>My Bookings</li><li>Venue Bookings</li></ul></div>
+    <div><h4>Company</h4><ul><li>About</li><li>Contact</li></ul></div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 Definite Travel. Exhibition prototype.</span>
+    <span>Designed for client preview</span>
+  </div>
+</footer>
+
+<button class="chat-fab" onclick="window.location.href='ai-chat.html'" aria-label="Open AI Assistant">
+  <span class="ping"></span>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v12H5.5L4 18V4z" stroke="white" stroke-width="2" stroke-linejoin="round"/></svg>
+</button>
+
+<script>
+  // Tabs
+  const tabs = document.querySelectorAll('.tab');
+  const panels = { itinerary: document.getElementById('panel-itinerary'), cabins: document.getElementById('panel-cabins'), dining: document.getElementById('panel-dining'), packages: document.getElementById('panel-packages') };
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    Object.values(panels).forEach(p => p.style.display = 'none');
+    panels[t.dataset.tab].style.display = 'block';
+  }));
+
+  // Cabin selection updates summary
+  const cabinOpts = document.querySelectorAll('.cabin-opt');
+  cabinOpts.forEach(opt => opt.addEventListener('click', () => {
+    cabinOpts.forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    const price = parseInt(opt.dataset.price, 10);
+    const cabinTotal = price * 2;
+    document.getElementById('sumCabin').textContent = '$' + cabinTotal.toLocaleString();
+    document.getElementById('sumCabin').previousElementSibling ? null : null;
+    document.querySelector('#panel-cabins').previousElementSibling; // no-op, keep structure
+    const total = cabinTotal + 158 + 214;
+    document.getElementById('sumTotal').textContent = '$' + total.toLocaleString();
+    // update label text
+    document.querySelectorAll('.summary-row span')[0].textContent = opt.dataset.name + ' × 2 guests';
+  }));
+</script>
+</body>
+</html>

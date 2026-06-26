@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Venues &amp; Events — Meridian Voyages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  .page-head{background:linear-gradient(120deg,var(--navy) 0%,#0c3a56 100%);padding:64px 0 0;}
+  .page-head .wrap{padding-bottom:44px;}
+  .page-head h1{color:#fff;font-size:38px;max-width:560px;}
+  .page-head p{color:#BFD8E8;font-size:15px;margin-top:12px;max-width:480px;}
+
+  .filter-bar{
+    background:#fff;border-radius:var(--r-lg);box-shadow:var(--shadow-lg);
+    padding:22px 26px;margin-top:-30px;position:relative;z-index:5;
+    display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:18px;align-items:end;
+  }
+  .filter-bar .field label{display:block;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:7px;}
+  .filter-bar select, .filter-bar input{
+    width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:var(--r-sm);font-size:14px;font-family:inherit;
+  }
+  .guest-slider-wrap{display:flex;align-items:center;gap:10px;}
+  .guest-slider-wrap input[type=range]{flex:1;}
+  .guest-val{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);font-size:15px;min-width:38px;}
+
+  .layout2{display:grid;grid-template-columns:300px 1fr;gap:40px;margin-top:56px;}
+  .filter-side .group{margin-bottom:30px;}
+  .filter-side .group h4{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin-bottom:14px;}
+  .check-opt{display:flex;align-items:center;gap:10px;font-size:14px;margin-bottom:11px;cursor:pointer;}
+  .check-opt input{width:16px;height:16px;accent-color:var(--teal);}
+
+  .venue-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .venue-card{overflow:hidden;}
+  .venue-card .photo{height:170px;position:relative;}
+  .venue-card .photo .cap-pill{position:absolute;bottom:14px;left:14px;background:rgba(7,26,48,.75);color:#fff;backdrop-filter:blur(6px);}
+  .venue-card .body{padding:20px;}
+  .venue-card h3{font-size:18px;margin-bottom:4px;}
+  .venue-card .ship-of{font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;}
+  .venue-card .specs{display:flex;gap:16px;font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
+  .venue-card .specs span{display:flex;align-items:center;gap:5px;}
+  .venue-card .foot{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--line);}
+  .venue-card .rate{font-family:'Fraunces',serif;font-size:18px;color:var(--navy);}
+  .venue-card .rate small{font-family:'Inter';font-size:11px;color:var(--ink-soft);font-weight:500;}
+
+  .avail-badge{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;}
+  .avail-badge.open{color:#1a8754;}
+  .avail-badge.tight{color:var(--coral);}
+  .avail-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+  /* Modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(7,26,48,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:100;padding:24px;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:var(--r-lg);max-width:560px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+  .modal-head{height:160px;background:linear-gradient(135deg,var(--navy),var(--teal));position:relative;border-radius:var(--r-lg) var(--r-lg) 0 0;}
+  .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .modal-body{padding:28px;}
+  .modal-body h3{font-size:22px;margin-bottom:6px;}
+  .modal-body .specs{display:flex;gap:18px;color:var(--ink-soft);font-size:13.5px;margin:10px 0 20px;}
+  .modal-body p.desc{font-size:14px;color:var(--ink-soft);line-height:1.6;margin-bottom:24px;}
+  .modal-field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .modal-field label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;}
+  .modal-field input, .modal-field select, .modal-field textarea{
+    width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:var(--r-sm);font-size:14px;font-family:inherit;
+  }
+  .conflict-note{display:flex;gap:10px;background:#FFF4ED;border:1px solid #FFD9BD;border-radius:var(--r-sm);padding:12px 14px;font-size:12.5px;color:#B5552B;margin-bottom:18px;}
+
+  @media(max-width:980px){
+    .filter-bar{grid-template-columns:1fr 1fr;}
+    .layout2{grid-template-columns:1fr;}
+    .venue-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M5 13l1-7h12l1 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      Meridian Voyages
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Cruises</a>
+      <a href="cruise-detail.html">Destinations</a>
+      <a href="venue-booking.html" class="active">Venues &amp; Events</a>
+      <a href="#">Packages</a>
+      <a href="#">My Bookings</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="admin-dashboard.html" class="btn btn-primary btn-sm">Admin View</a>
+    </div>
+  </div>
+</nav>
+<div class="horizon"></div>
+
+<header class="page-head">
+  <div class="wrap">
+    <p class="eyebrow" style="color:#8FE3F2;">Onboard venues</p>
+    <h1>Find the right space, for the right number of guests.</h1>
+    <p>From an intimate dinner for twelve to a wedding reception for 250 — search by capacity and date, and book directly against a live sailing.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="filter-bar">
+    <div class="field"><label>Ship</label><select><option>Any ship</option><option>Horizon of the Seas</option><option>Meridian Serenity</option><option>Aurora Wave</option></select></div>
+    <div class="field"><label>Date</label><input type="date" value="2026-08-10"></div>
+    <div class="field"><label>Venue type</label><select><option>Any type</option><option>Ballroom</option><option>Lounge</option><option>Deck</option><option>Dining Hall</option></select></div>
+    <div class="field">
+      <label>Guests · <span id="guestVal">250</span></label>
+      <div class="guest-slider-wrap">
+        <input type="range" min="10" max="400" value="250" id="guestSlider">
+      </div>
+    </div>
+    <button class="btn btn-primary">Search</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="layout2">
+    <aside class="filter-side">
+      <div class="group">
+        <h4>Venue Type</h4>
+        <label class="check-opt"><input type="checkbox" checked> Ballroom</label>
+        <label class="check-opt"><input type="checkbox" checked> Lounge</label>
+        <label class="check-opt"><input type="checkbox"> Open Deck</label>
+        <label class="check-opt"><input type="checkbox"> Dining Hall</label>
+        <label class="check-opt"><input type="checkbox"> Conference Room</label>
+      </div>
+      <div class="group">
+        <h4>Capacity</h4>
+        <label class="check-opt"><input type="radio" name="cap"> Under 50 guests</label>
+        <label class="check-opt"><input type="radio" name="cap"> 50–150 guests</label>
+        <label class="check-opt"><input type="radio" name="cap" checked> 150–300 guests</label>
+        <label class="check-opt"><input type="radio" name="cap"> 300+ guests</label>
+      </div>
+      <div class="group">
+        <h4>Availability</h4>
+        <label class="check-opt"><input type="checkbox" checked> Available on selected date only</label>
+      </div>
+    </aside>
+
+    <main>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:24px;">
+        <p style="color:var(--ink-soft);font-size:14px;">Showing <b style="color:var(--navy);">4 venues</b> that fit 250+ guests on Aug 10, 2026</p>
+        <select style="border:none;font-size:13.5px;font-weight:600;color:var(--navy);">
+          <option>Sort: Best match</option>
+          <option>Sort: Capacity (high to low)</option>
+          <option>Sort: Price (low to high)</option>
+        </select>
+      </div>
+
+      <div class="venue-grid">
+        <div class="card venue-card">
+          <div class="photo" style="background:linear-gradient(135deg,#0A2540,#0F6E8C);">
+            <span class="pill cap-pill">Up to 300 guests</span>
+          </div>
+          <div class="body">
+            <h3>Grand Horizon Ballroom</h3>
+            <div class="ship-of">Horizon of the Seas · Deck 5</div>
+            <div class="specs">
+              <span>🪑 Seated banquet style</span>
+              <span>🎤 AV included</span>
+            </div>
+            <div class="avail-badge open"><span class="dot"></span>Available Aug 10</div>
+            <div class="foot">
+              <div class="rate">$2,400<small> / flat rate</small></div>
+              <button class="btn btn-primary btn-sm" onclick="openModal('Grand Horizon Ballroom','Horizon of the Seas · Deck 5','300')">Reserve</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card venue-card">
+          <div class="photo" style="background:linear-gradient(135deg,#0F6E8C,#4FC3D9);">
+            <span class="pill cap-pill">Up to 260 guests</span>
+          </div>
+          <div class="body">
+            <h3>Sky Lounge &amp; Terrace</h3>
+            <div class="ship-of">Meridian Serenity · Deck 14</div>
+            <div class="specs">
+              <span>🌅 Open-air terrace</span>
+              <span>🍸 Bar included</span>
+            </div>
+            <div class="avail-badge tight"><span class="dot"></span>Only 1 slot left Aug 10</div>
+            <div class="foot">
+              <div class="rate">$3,100<small> / flat rate</small></div>
+              <button class="btn btn-primary btn-sm" onclick="openModal('Sky Lounge &amp; Terrace','Meridian Serenity · Deck 14','260')">Reserve</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card venue-card">
+          <div class="photo" style="background:linear-gradient(135deg,#1c6e8c,#9fe3ef);">
+            <span class="pill cap-pill">Up to 400 guests</span>
+          </div>
+          <div class="body">
+            <h3>Aurora Main Theatre</h3>
+            <div class="ship-of">Aurora Wave · Deck 4</div>
+            <div class="specs">
+              <span>🎭 Tiered seating</span>
+              <span>🎤 Full stage &amp; AV</span>
+            </div>
+            <div class="avail-badge open"><span class="dot"></span>Available Aug 10</div>
+            <div class="foot">
+              <div class="rate">$190<small> / hour</small></div>
+              <button class="btn btn-primary btn-sm" onclick="openModal('Aurora Main Theatre','Aurora Wave · Deck 4','400')">Reserve</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card venue-card">
+          <div class="photo" style="background:linear-gradient(135deg,#16486b,#3fa8c2);">
+            <span class="pill cap-pill">Up to 280 guests</span>
+          </div>
+          <div class="body">
+            <h3>Compass Deck (Open Air)</h3>
+            <div class="ship-of">Horizon of the Seas · Deck 16</div>
+            <div class="specs">
+              <span>⛅ Weather-dependent</span>
+              <span>🎶 Sound system included</span>
+            </div>
+            <div class="avail-badge open"><span class="dot"></span>Available Aug 10</div>
+            <div class="foot">
+              <div class="rate">$1,950<small> / flat rate</small></div>
+              <button class="btn btn-primary btn-sm" onclick="openModal('Compass Deck (Open Air)','Horizon of the Seas · Deck 16','280')">Reserve</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="index.html" style="color:#fff;margin-bottom:14px;display:flex;">
+        <span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></span>
+        Meridian Voyages
+      </a>
+      <p style="font-size:13.5px;max-width:280px;line-height:1.6;">A cruise booking and onboard experience platform.</p>
+    </div>
+    <div><h4>Explore</h4><ul><li>All Cruises</li><li>Destinations</li></ul></div>
+    <div><h4>Manage</h4><ul><li>My Bookings</li><li>Venue Bookings</li></ul></div>
+    <div><h4>Company</h4><ul><li>About</li><li>Contact</li></ul></div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 Meridian Voyages. Exhibition prototype.</span>
+    <span>Designed for client preview</span>
+  </div>
+</footer>
+
+<button class="chat-fab" onclick="window.location.href='ai-chat.html'" aria-label="Open AI Assistant">
+  <span class="ping"></span>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v12H5.5L4 18V4z" stroke="white" stroke-width="2" stroke-linejoin="round"/></svg>
+</button>
+
+<!-- Reservation modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-close" onclick="closeModal()">✕</div>
+    </div>
+    <div class="modal-body">
+      <h3 id="modalTitle">Grand Horizon Ballroom</h3>
+      <div class="specs">
+        <span id="modalShip">Horizon of the Seas · Deck 5</span>
+        <span id="modalCap">Up to 300 guests</span>
+      </div>
+      <p class="desc">Reserve this venue for a private event during your sailing. Pricing is a flat rate for up to 4 hours; additional time is billed hourly.</p>
+
+      <div class="conflict-note">
+        ⚠️ This venue has a scheduled event (Captain's Welcome Reception) from 6:00–8:00 PM on this date. Choose a different time window to avoid a conflict.
+      </div>
+
+      <div class="modal-field-row">
+        <div class="modal-field"><label>Event date</label><input type="date" value="2026-08-10"></div>
+        <div class="modal-field"><label>Guest count</label><input type="number" value="250"></div>
+      </div>
+      <div class="modal-field-row">
+        <div class="modal-field"><label>Start time</label><input type="time" value="14:00"></div>
+        <div class="modal-field"><label>End time</label><input type="time" value="18:00"></div>
+      </div>
+      <div class="modal-field">
+        <label>Event name / occasion</label>
+        <input type="text" placeholder="e.g. Smith-Johnson Wedding Reception">
+      </div>
+      <div class="modal-field">
+        <label>Notes for the venue team</label>
+        <textarea rows="3" placeholder="Seating layout, catering needs, AV requirements..."></textarea>
+      </div>
+
+      <div class="summary-row total" style="margin-top:10px;"><span>Estimated total</span><span>$2,400</span></div>
+      <a href="#" class="btn btn-accent btn-block" style="margin-top:16px;">Confirm Reservation</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('guestSlider').addEventListener('input', e => {
+    document.getElementById('guestVal').textContent = e.target.value;
+  });
+  function openModal(name, ship, cap){
+    document.getElementById('modalTitle').textContent = name;
+    document.getElementById('modalShip').textContent = ship;
+    document.getElementById('modalCap').textContent = 'Up to ' + cap + ' guests';
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+  function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+  document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target.id === 'modalOverlay') closeModal(); });
+</script>
+</body>
+</html>
